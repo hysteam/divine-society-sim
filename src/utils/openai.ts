@@ -1,6 +1,5 @@
 import OpenAI from 'openai';
 import { z } from 'zod';
-import { zodResponseFormat } from 'openai/helpers/zod';
 
 const openai = new OpenAI({
   apiKey: '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',
@@ -25,7 +24,7 @@ const AgentResponseSchema = z.object({
 });
 
 export const generateAgentResponse = async (prompt: string) => {
-  const response = await openai.chat.completions.parse({
+  const response = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: [
       {
@@ -37,14 +36,17 @@ export const generateAgentResponse = async (prompt: string) => {
         content: prompt
       }
     ],
-    response_format: zodResponseFormat(AgentResponseSchema, "agent")
+    response_format: { type: "json_object" }
   });
 
-  return response.choices[0].message.parsed;
+  const content = response.choices[0].message.content;
+  if (!content) throw new Error("No content in response");
+  
+  return AgentResponseSchema.parse(JSON.parse(content));
 };
 
 export const generateGodResponse = async (prompt: string) => {
-  const response = await openai.chat.completions.parse({
+  const response = await openai.chat.completions.create({
     model: "gpt-4o",
     messages: [
       {
@@ -56,8 +58,11 @@ export const generateGodResponse = async (prompt: string) => {
         content: prompt
       }
     ],
-    response_format: zodResponseFormat(GodResponseSchema, "god")
+    response_format: { type: "json_object" }
   });
 
-  return response.choices[0].message.parsed;
+  const content = response.choices[0].message.content;
+  if (!content) throw new Error("No content in response");
+  
+  return GodResponseSchema.parse(JSON.parse(content));
 };
