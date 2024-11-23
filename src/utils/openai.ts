@@ -13,7 +13,7 @@ const GodResponseSchema = z.object({
   actions: z.array(z.string()),
   affectedEntities: z.array(z.string()).optional(),
   priority: z.string().description("can be only one of the followings low, medium, high")
-  timestamp: z.Date()
+  timestamp: z.string().description('timestamp should be in date format')
 });
 
 // Define the schema for Agent's response
