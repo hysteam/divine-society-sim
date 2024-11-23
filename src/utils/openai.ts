@@ -29,7 +29,7 @@ export const generateAgentResponse = async (prompt: string) => {
     messages: [
       {
         role: "system",
-        content: "You are an AI agent in a simulated world. Respond with structured decisions and actions."
+        content: "You are an AI agent in a simulated world. Respond with structured JSON decisions and actions. Your response must be a valid JSON object."
       },
       {
         role: "user",
@@ -51,7 +51,7 @@ export const generateGodResponse = async (prompt: string) => {
     messages: [
       {
         role: "system",
-        content: "You are the God AI overseeing a simulated world. Make decisions that affect the world and its inhabitants."
+        content: "You are the God AI overseeing a simulated world. Make decisions that affect the world and its inhabitants. Respond with a structured JSON object containing your divine insights."
       },
       {
         role: "user",
