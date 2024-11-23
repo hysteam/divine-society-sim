@@ -1,12 +1,31 @@
 import OpenAI from 'openai';
+import { z } from 'zod';
+import { zodResponseFormat } from 'openai/helpers/zod';
 
 const openai = new OpenAI({
   apiKey: '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',
   dangerouslyAllowBrowser: true
 });
 
+// Define the schema for God's response
+const GodResponseSchema = z.object({
+  message: z.string(),
+  actions: z.array(z.string()),
+  affectedEntities: z.array(z.string()).optional(),
+  priority: z.enum(['low', 'medium', 'high']).default('medium'),
+  timestamp: z.string().default(() => new Date().toISOString())
+});
+
+// Define the schema for Agent's response
+const AgentResponseSchema = z.object({
+  message: z.string(),
+  action: z.string(),
+  resources: z.array(z.string()).optional(),
+  status: z.enum(['idle', 'working', 'done']).default('idle')
+});
+
 export const generateAgentResponse = async (prompt: string) => {
-  const response = await openai.chat.completions.create({
+  const response = await openai.chat.completions.parse({
     model: "gpt-4o",
     messages: [
       {
@@ -18,14 +37,14 @@ export const generateAgentResponse = async (prompt: string) => {
         content: prompt
       }
     ],
-    response_format: { type: "json_object" }
+    response_format: zodResponseFormat(AgentResponseSchema, "agent")
   });
 
-  return response.choices[0].message.content;
+  return response.choices[0].message.parsed;
 };
 
 export const generateGodResponse = async (prompt: string) => {
-  const response = await openai.chat.completions.create({
+  const response = await openai.chat.completions.parse({
     model: "gpt-4o",
     messages: [
       {
@@ -37,8 +56,8 @@ export const generateGodResponse = async (prompt: string) => {
         content: prompt
       }
     ],
-    response_format: { type: "json_object" }
+    response_format: zodResponseFormat(GodResponseSchema, "god")
   });
 
-  return response.choices[0].message.content;
+  return response.choices[0].message.parsed;
 };

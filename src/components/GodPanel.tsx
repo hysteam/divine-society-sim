@@ -17,25 +17,32 @@ export const GodPanel = () => {
     setIsProcessing(true);
     try {
       const response = await generateGodResponse(message);
-      const parsedResponse = JSON.parse(response as string);
       
+      // Log the main message
       addEvent({
-        message: `God: ${parsedResponse.message}`,
+        message: `God: ${response.message}`,
         type: 'info',
       });
 
-      if (parsedResponse.actions) {
-        parsedResponse.actions.forEach((action: string) => {
-          addEvent({
-            message: `Action: ${action}`,
-            type: 'info',
-          });
+      // Log each action
+      response.actions.forEach((action) => {
+        addEvent({
+          message: `Action: ${action}`,
+          type: 'info',
+        });
+      });
+
+      // If there are affected entities, log them
+      if (response.affectedEntities?.length) {
+        addEvent({
+          message: `Affected: ${response.affectedEntities.join(', ')}`,
+          type: 'info',
         });
       }
 
       toast({
-        title: "God AI Response",
-        description: parsedResponse.message,
+        title: `Divine Response (Priority: ${response.priority})`,
+        description: response.message,
       });
     } catch (error) {
       toast({
