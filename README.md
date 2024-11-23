@@ -1,69 +1,109 @@
-# Welcome to your Lovable project
+# Divine Society Simulation
 
-## Project info
+An infinite, AI-powered world simulation where autonomous agents live, interact, and evolve in a procedurally generated landscape. Take on the role of a divine overseer and watch as your world comes to life!
 
-**URL**: https://lovable.dev/projects/7cad1408-3d6a-427e-8b2d-d274ec6c1c30
+## Features
 
-## How can I edit this code?
+- **Infinite World**: Explore an endless, procedurally generated landscape with diverse biomes and resources
+- **AI-Powered Agents**: Autonomous beings that make intelligent decisions using GPT-4
+- **Multiple Species**: Choose from various species types:
+  - Gatherers: Collect and share resources
+  - Builders: Construct infrastructure
+  - Explorers: Discover new areas
+  - Traders: Exchange resources and form alliances
+- **Divine Intervention**: Influence your world through the God Panel
+- **Dynamic Evolution**: Watch your society grow and adapt
 
-There are several ways of editing your application.
+## Getting Started
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7cad1408-3d6a-427e-8b2d-d274ec6c1c30) and start prompting.
+- Node.js (v16 or higher)
+- npm or yarn
+- OpenAI API key
 
-Changes made via Lovable will be committed automatically to this repo.
+### Installation
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/divine-society-sim.git
+cd divine-society-sim
 ```
 
-**Edit a file directly in GitHub**
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. Set up your OpenAI API key:
+- Open `src/utils/openai.ts`
+- Replace `'Replace with your OpenAI API key'` with your actual OpenAI API key
 
-**Use GitHub Codespaces**
+4. Start the development server:
+```bash
+npm run dev
+# or
+yarn dev
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+5. Open your browser and navigate to `http://localhost:3000`
 
-## What technologies are used for this project?
+## How to Play
 
-This project is built with .
+1. **Initial Setup**
+   - When you first load the simulation, you'll see the Species Selection dialog
+   - Choose which species you want in your world and their quantities
+   - Click "Create Society" to begin
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
+2. **Navigation**
+   - Pan: Click and drag to move around the world
+   - Zoom: Use mouse wheel to zoom in/out
+   - Hover over agents to see their details
+
+3. **World Interaction**
+   - Use the God Panel to influence the world
+   - Watch the Event Log to see what's happening
+   - Observe agents as they make decisions and interact
+
+## Technologies Used
+
+- React + TypeScript
+- OpenAI GPT-4 API
 - Tailwind CSS
+- Zustand (State Management)
+- Simplex Noise (World Generation)
 
-## How can I deploy this project?
+## Contributing
 
-Simply open [Lovable](https://lovable.dev/projects/7cad1408-3d6a-427e-8b2d-d274ec6c1c30) and click on Share -> Publish.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## I want to use a custom domain - is that possible?
+## License
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Important Notes
+
+- This project requires an OpenAI API key to function
+- API calls are made for agent decisions, which may incur costs
+- Consider implementing rate limiting for API calls
+- The simulation can be resource-intensive with many agents
+
+## Known Issues
+
+- High CPU usage with many agents
+- Occasional API rate limiting
+- Memory usage grows with world exploration
+
+## Future Plans
+
+- [ ] Agent memory and learning
+- [ ] Complex social structures
+- [ ] More diverse world events
+- [ ] Resource management systems
+- [ ] Save/Load functionality
+
+## Support
+
+If you encounter any issues or have questions, please open an issue on GitHub.
