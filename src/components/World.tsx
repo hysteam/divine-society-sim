@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Agent } from './Agent';
 import { useAgentStore } from '@/stores/agentStore';
-import SimplexNoise from 'simplex-noise';
+import { createNoise2D } from 'simplex-noise';
 
 const TILE_SIZE = 32;
 const WORLD_WIDTH = 50;
@@ -20,7 +20,7 @@ interface Tile {
 export const World = () => {
   const { agents } = useAgentStore();
   const [tiles, setTiles] = useState<Tile[]>([]);
-  const noise = new SimplexNoise();
+  const noise2D = createNoise2D();
 
   useEffect(() => {
     generateWorld();
@@ -39,8 +39,8 @@ export const World = () => {
   };
 
   const generateBiome = (x: number, y: number): BiomeType => {
-    const elevation = noise.noise2D(x * 0.1, y * 0.1);
-    const moisture = noise.noise2D(x * 0.08 + 1000, y * 0.08 + 1000);
+    const elevation = noise2D(x * 0.1, y * 0.1);
+    const moisture = noise2D(x * 0.08 + 1000, y * 0.08 + 1000);
 
     if (elevation > 0.6) return 'mountains';
     if (elevation < -0.3) return 'lake';
