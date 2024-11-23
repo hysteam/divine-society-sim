@@ -12,8 +12,8 @@ const GodResponseSchema = z.object({
   message: z.string(),
   actions: z.array(z.string()),
   affectedEntities: z.array(z.string()).optional(),
-  priority: z.enum(['low', 'medium', 'high']).default('medium'),
-  timestamp: z.string().default(() => new Date().toISOString())
+  priority: z.string().description("can be only one of the followings low, medium, high")
+  timestamp: z.Date()
 });
 
 // Define the schema for Agent's response
@@ -21,7 +21,7 @@ const AgentResponseSchema = z.object({
   message: z.string(),
   action: z.string(),
   resources: z.array(z.string()).optional(),
-  status: z.enum(['idle', 'working', 'done']).default('idle')
+  status: z.string().description("can be only one of the following idle, working, done")
 });
 
 export const generateAgentResponse = async (prompt: string) => {
