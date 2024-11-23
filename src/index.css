@@ -46,5 +46,6 @@
 }
 
 .world-container {
-  @apply relative w-full h-full bg-world-ground overflow-hidden;
+  @apply relative w-full h-[calc(100vh-2rem)] bg-world-ground overflow-hidden;
+  image-rendering: pixelated;
 }

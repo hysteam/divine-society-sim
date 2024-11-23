@@ -14,11 +14,11 @@ interface AgentProps {
 export const Agent = ({ agent }: AgentProps) => {
   return (
     <motion.div
-      className="agent"
+      className="absolute w-8 h-8 rounded-sm shadow-lg cursor-pointer"
       style={{
         backgroundColor: agent.color,
-        left: `${agent.x}%`,
-        top: `${agent.y}%`,
+        left: `${agent.x * 32}px`,
+        top: `${agent.y * 32}px`,
       }}
       whileHover={{
         scale: 1.2,
@@ -27,6 +27,10 @@ export const Agent = ({ agent }: AgentProps) => {
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
-    />
+    >
+      <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-white whitespace-nowrap">
+        {agent.name}
+      </div>
+    </motion.div>
   );
 };
