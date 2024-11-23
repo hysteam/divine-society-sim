@@ -1,11 +1,26 @@
 import OpenAI from 'openai';
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from 'zod';
+import { useOpenAIStore } from '@/stores/openAIStore';
 
-const openai = new OpenAI({
-  apiKey: 'Replace with your OpenAI API key',
-  dangerouslyAllowBrowser: true
-});
+let openaiInstance: OpenAI | null = null;
+
+const getOpenAIInstance = () => {
+  const apiKey = useOpenAIStore.getState().apiKey;
+  
+  if (!apiKey) {
+    throw new Error('OpenAI API key not set. Please set your API key to use this feature.');
+  }
+
+  if (!openaiInstance || openaiInstance.apiKey !== apiKey) {
+    openaiInstance = new OpenAI({
+      apiKey: apiKey,
+      dangerouslyAllowBrowser: true
+    });
+  }
+
+  return openaiInstance;
+};
 
 // Define the schema for God's response
 const GodResponseSchema = z.object({
@@ -37,6 +52,7 @@ const AgentDecisionSchema = z.object({
 });
 
 export const generateAgentResponse = async (prompt: string) => {
+  const openai = getOpenAIInstance();
   const response = await openai.beta.chat.completions.parse({
     model: "gpt-4o-mini",
     messages: [
@@ -60,6 +76,7 @@ export const generateAgentResponse = async (prompt: string) => {
 };
 
 export const generateGodResponse = async (prompt: string) => {
+  const openai = getOpenAIInstance();
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
@@ -102,6 +119,7 @@ export const generateAgentDecision = async (
     structures: string[];
   }
 ) => {
+  const openai = getOpenAIInstance();
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4",

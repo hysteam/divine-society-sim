@@ -5,6 +5,7 @@ import { EventLog } from '@/components/EventLog';
 import { SpeciesDialog } from '@/components/SpeciesDialog';
 import { useAgentStore } from '@/stores/agentStore';
 import { useEventStore } from '@/stores/eventStore';
+import { ApiKeyInput } from '@/components/ApiKeyInput';
 
 const TICK_INTERVAL = 1000; // 1 second
 
@@ -12,6 +13,7 @@ const Index = () => {
   const [showSpeciesDialog, setShowSpeciesDialog] = useState(true);
   const { agents, updateAgent } = useAgentStore();
   const { addEvent } = useEventStore();
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -94,14 +96,25 @@ const Index = () => {
   }, [agents, updateAgent, addEvent]);
 
   return (
-    <>
+    <div>
       <div className="flex h-screen w-screen bg-background overflow-hidden">
         <div className="flex-1 relative">
           <World />
         </div>
         <div className="w-96 glass-panel m-4 p-4 flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
+        <div className="text-lg font-semibold flex justify-between items-center"><div>God AI Interface</div>
+            <button
+              className="bg-white text-black py-2 px-4 rounded-md pb-2 hover:bg-gray-200"
+              onClick={() => setShowApiKeyInput(true)}
+            >
+              Set API Key
+            </button>
+            </div>
           <GodPanel />
+          </div>
           <div className="flex-1 overflow-y-auto">
+            <ApiKeyInput open={showApiKeyInput} onOpenChange={setShowApiKeyInput}  />
             <EventLog />
           </div>
         </div>
@@ -110,7 +123,7 @@ const Index = () => {
         open={showSpeciesDialog} 
         onOpenChange={setShowSpeciesDialog} 
       />
-    </>
+    </div>
   );
 };
 

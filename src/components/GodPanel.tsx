@@ -90,8 +90,6 @@ export const GodPanel = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="text-lg font-semibold">God AI Interface</div>
       <div className="flex gap-2">
         <Input
           value={message}
@@ -107,6 +105,5 @@ export const GodPanel = () => {
           {isProcessing ? "Processing..." : "Send"}
         </Button>
       </div>
-    </div>
   );
 };
