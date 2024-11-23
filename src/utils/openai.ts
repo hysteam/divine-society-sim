@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from 'zod';
 
 const openai = new OpenAI({
@@ -24,8 +25,8 @@ const AgentResponseSchema = z.object({
 });
 
 export const generateAgentResponse = async (prompt: string) => {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
+  const response = await openai.beta.chat.completions.parse({
+    model: "gpt-4o-mini",
     messages: [
       {
         role: "system",
@@ -36,18 +37,18 @@ export const generateAgentResponse = async (prompt: string) => {
         content: prompt
       }
     ],
-    response_format: { type: "json_object" }
+    response_format: zodResponseFormat(AgentResponseSchema, "AgentResponse"),
   });
 
-  const content = response.choices[0].message.content;
+  const content = response.choices[0].message.parsed;
   if (!content) throw new Error("No content in response");
   
-  return AgentResponseSchema.parse(JSON.parse(content));
+  return content.AgentResponse || content;
 };
 
 export const generateGodResponse = async (prompt: string) => {
   const response = await openai.chat.completions.create({
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     messages: [
       {
         role: "system",
@@ -58,11 +59,11 @@ export const generateGodResponse = async (prompt: string) => {
         content: prompt
       }
     ],
-    response_format: { type: "json_object" }
+    response_format: zodResponseFormat(GodResponseSchema, "GodResponse"),
   });
 
-  const content = response.choices[0].message.content;
+  const content = response.choices[0].message.parsed;
   if (!content) throw new Error("No content in response");
   
-  return GodResponseSchema.parse(JSON.parse(content));
+  return content.GodResponse || content;
 };
