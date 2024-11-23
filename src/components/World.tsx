@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Agent } from './Agent';
 import { useAgentStore } from '@/stores/agentStore';
+import SimplexNoise from 'simplex-noise';
 
 const TILE_SIZE = 32;
 const WORLD_WIDTH = 50;
 const WORLD_HEIGHT = 30;
 
-type TileType = 'grass' | 'dirt' | 'stone' | 'water' | 'tree';
+type BiomeType = 'forest' | 'plains' | 'desert' | 'mountains' | 'lake';
+type ResourceType = 'wood' | 'stone' | 'iron' | 'gold' | 'food' | 'water';
 
 interface Tile {
-  type: TileType;
+  type: BiomeType;
+  resources: ResourceType[];
   x: number;
   y: number;
 }
@@ -17,6 +20,7 @@ interface Tile {
 export const World = () => {
   const { agents } = useAgentStore();
   const [tiles, setTiles] = useState<Tile[]>([]);
+  const noise = new SimplexNoise();
 
   useEffect(() => {
     generateWorld();
@@ -26,29 +30,72 @@ export const World = () => {
     const newTiles: Tile[] = [];
     for (let y = 0; y < WORLD_HEIGHT; y++) {
       for (let x = 0; x < WORLD_WIDTH; x++) {
-        const tileType = generateTileType(x, y);
-        newTiles.push({ type: tileType, x, y });
+        const biome = generateBiome(x, y);
+        const resources = generateResources(biome);
+        newTiles.push({ type: biome, resources, x, y });
       }
     }
     setTiles(newTiles);
   };
 
-  const generateTileType = (x: number, y: number): TileType => {
-    const noise = Math.sin(x * 0.1) + Math.cos(y * 0.1);
-    if (y < WORLD_HEIGHT * 0.3) return 'tree';
-    if (y < WORLD_HEIGHT * 0.5) return 'grass';
-    if (y < WORLD_HEIGHT * 0.7) return 'dirt';
-    return 'stone';
+  const generateBiome = (x: number, y: number): BiomeType => {
+    const elevation = noise.noise2D(x * 0.1, y * 0.1);
+    const moisture = noise.noise2D(x * 0.08 + 1000, y * 0.08 + 1000);
+
+    if (elevation > 0.6) return 'mountains';
+    if (elevation < -0.3) return 'lake';
+    if (moisture > 0.3) return 'forest';
+    if (moisture < -0.3) return 'desert';
+    return 'plains';
   };
 
-  const getTileColor = (type: TileType): string => {
+  const generateResources = (biome: BiomeType): ResourceType[] => {
+    const resources: ResourceType[] = [];
+    const chance = Math.random();
+
+    switch (biome) {
+      case 'forest':
+        if (chance > 0.7) resources.push('wood');
+        if (chance > 0.9) resources.push('food');
+        break;
+      case 'mountains':
+        if (chance > 0.6) resources.push('stone');
+        if (chance > 0.8) resources.push('iron');
+        if (chance > 0.95) resources.push('gold');
+        break;
+      case 'plains':
+        if (chance > 0.7) resources.push('food');
+        break;
+      case 'lake':
+        resources.push('water');
+        break;
+      default:
+        break;
+    }
+
+    return resources;
+  };
+
+  const getBiomeColor = (type: BiomeType): string => {
     switch (type) {
-      case 'grass': return '#4CAF50';
-      case 'dirt': return '#795548';
-      case 'stone': return '#9E9E9E';
-      case 'water': return '#2196F3';
-      case 'tree': return '#2E7D32';
+      case 'forest': return '#2E7D32';
+      case 'plains': return '#8BC34A';
+      case 'desert': return '#FDD835';
+      case 'mountains': return '#757575';
+      case 'lake': return '#1976D2';
       default: return '#000000';
+    }
+  };
+
+  const getResourceIcon = (resource: ResourceType): string => {
+    switch (resource) {
+      case 'wood': return '🌲';
+      case 'stone': return '🪨';
+      case 'iron': return '⛏️';
+      case 'gold': return '💰';
+      case 'food': return '🌾';
+      case 'water': return '💧';
+      default: return '';
     }
   };
 
@@ -62,13 +109,19 @@ export const World = () => {
         {tiles.map((tile, index) => (
           <div
             key={index}
-            className="transition-colors duration-200 hover:brightness-110"
+            className="relative transition-colors duration-200 hover:brightness-110"
             style={{
-              backgroundColor: getTileColor(tile.type),
+              backgroundColor: getBiomeColor(tile.type),
               width: TILE_SIZE,
               height: TILE_SIZE,
             }}
-          />
+          >
+            {tile.resources.length > 0 && (
+              <div className="absolute inset-0 flex items-center justify-center text-xs">
+                {getResourceIcon(tile.resources[0])}
+              </div>
+            )}
+          </div>
         ))}
       </div>
       {agents.map((agent) => (
