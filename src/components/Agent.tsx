@@ -1,36 +1,85 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface AgentProps {
   agent: {
     id: string;
+    name: string;
     x: number;
     y: number;
-    color: string;
-    name: string;
+    status: string;
+    resources: string[];
+    species: string;
+    traits: string[];
+    behavior: string;
   };
+  scale: number;
+  offsetX: number;
+  offsetY: number;
 }
 
-export const Agent = ({ agent }: AgentProps) => {
+const getSpeciesEmoji = (species: string) => {
+  switch (species) {
+    case 'Gatherers': return '🌾';
+    case 'Builders': return '🏗️';
+    case 'Explorers': return '🧭';
+    case 'Traders': return '💰';
+    default: return '👤';
+  }
+};
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'gathering': return 'bg-green-500';
+    case 'building': return 'bg-yellow-500';
+    case 'exploring': return 'bg-blue-500';
+    case 'trading': return 'bg-purple-500';
+    default: return 'bg-gray-500';
+  }
+};
+
+export const Agent = ({ agent, scale, offsetX, offsetY }: AgentProps) => {
+  const TILE_SIZE = 32;
+  
   return (
-    <motion.div
-      className="absolute w-8 h-8 rounded-sm shadow-lg cursor-pointer"
-      style={{
-        backgroundColor: agent.color,
-        left: `${agent.x * 32}px`,
-        top: `${agent.y * 32}px`,
-      }}
-      whileHover={{
-        scale: 1.2,
-        boxShadow: '0 0 8px rgba(255,255,255,0.5)',
-      }}
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs text-white whitespace-nowrap">
-        {agent.name}
-      </div>
-    </motion.div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <div
+            className="absolute transition-all duration-200 flex items-center justify-center"
+            style={{
+              width: TILE_SIZE,
+              height: TILE_SIZE,
+              transform: `translate(${agent.x * TILE_SIZE * scale + offsetX}px, ${agent.y * TILE_SIZE * scale + offsetY}px) scale(${scale})`,
+              transformOrigin: 'top left'
+            }}
+          >
+            <div className={`relative p-2 rounded-full shadow-lg ${getStatusColor(agent.status)}`}>
+              {getSpeciesEmoji(agent.species)}
+              <div className="absolute -right-1 -top-1 w-2 h-2 rounded-full bg-white animate-pulse" />
+            </div>
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs bg-black/50 px-2 py-1 rounded">
+              {agent.name}
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div className="text-sm">
+            <div className="font-bold">{agent.name}</div>
+            <div>Species: {agent.species}</div>
+            <div>Status: {agent.status}</div>
+            <div>Traits: {agent.traits.join(', ')}</div>
+            {agent.resources.length > 0 && (
+              <div>Resources: {agent.resources.join(', ')}</div>
+            )}
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

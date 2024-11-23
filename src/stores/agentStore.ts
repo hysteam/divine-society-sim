@@ -2,10 +2,15 @@ import { create } from 'zustand';
 
 interface Agent {
   id: string;
+  name: string;
   x: number;
   y: number;
-  color: string;
-  name: string;
+  status: string;
+  resources: string[];
+  species: string;
+  traits: string[];
+  behavior: string;
+  lastAction: number;
 }
 
 interface AgentStore {
